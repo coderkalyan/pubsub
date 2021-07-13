@@ -54,7 +54,7 @@ int pubsub_poll(struct pubsub_subscriber_s *subscriber, k_timeout_t timeout);
 			APPLICATION, PUBSUB_TOPIC_INIT_PRIORITY); 			\
 
 #define PUBSUB_SUBSCRIBER_DEFINE(topic_name, subscriber_name, channel) 	\
-	struct pubsub_subscriber_s subscriber_name; 				\
+	static struct pubsub_subscriber_s subscriber_name; 				\
 																\
 	static int pubsub_sub_init_##subscriber_name(const struct device *dev) { \
 		ARG_UNUSED(dev); 										\
