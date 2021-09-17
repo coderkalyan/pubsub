@@ -50,6 +50,7 @@ extern struct pubsub_topic_s my_message_topic;
 ```
 
 Now that we have a data type, we can start publishing to it:
+
 `src/publisher.c`
 ```c
 #include <pubsub/pubsub.h>
@@ -83,7 +84,7 @@ Now that we have a sample being published at 2Hz, we can subscribe to it. There 
 
 Let's start with manually checking for updates. If your subscriber thread only needs to check for new data relatively infrequently, or you want to synchronize new data subscriptions to the subscriber thread's clock, this is what you want.
 
-`src/subscriber1.c`:
+`src/subscriber1.c`
 ```c
 #include <pubsub/pubsub.h>
 #include "topics/my_message.h"
@@ -105,6 +106,47 @@ static void subscriber_thread_entry_point(void)
 		}
 
 		sleep_ms(1000); /* not a real function */
+	}
+}
+```
+
+The other way to subscribe to data is through the *polling* API, which piggybacks Zephyr's `k_poll` API. This way is (slightly) less code, much lower latency, and does not waste resources manually polling for new data, and is especially useful when your thread is consistently consuming high-rate data samples from a publisher. The downside is that the poll API suspends your thread until the kernel is alerted that new data has arrived, so the subscriber thread cannot keep its own clock.
+
+Pubsub can have multiple threads subscribed to the same topic at the same time, using the manual and/or poll API. Try running this second thread at the same time:
+
+`src/subscriber2.c`
+```c
+#include <pubsub/pubsub.h>
+#include "topics/my_message.h"
+
+/* this macro statically defines a subscriber `my_message_sub` and subscribes it to `my_message_topic` on channel 0. */
+PUBSUB_SUBSCRIBER_DEFINE(my_message_topic, my_message_sub, 0);
+
+static void subscriber_thread_entry_point(void)
+{
+	struct my_message_s message;
+	int ret;
+
+	while (1) {
+		/* this function will return once new data has arrived, or upon timeout (1000ms in this case). */
+		ret = pubsub_poll(&my_message_sub, K_MSEC(1000));
+		/* ret returns:
+		* a positive value if new data was successfully returned
+		* 0 if the poll timed out
+		* negative if an error occured while polling
+		*/
+
+		if (ret > 0) {
+			/* got new data, copy it into our own struct */
+			pubsub_copy(my_message_sub, message);
+
+			printf("Received counter1: %d, counter2: %d\n", message.counter1, message.counter2);
+		} else if (ret == 0) {
+			printf("WARNING: Did not receive new data for 1000ms. Continuing poll.\n");
+		} else {
+			printf("ERROR: error while polling: %d\n", ret);
+			return;
+		}
 	}
 }
 ```
