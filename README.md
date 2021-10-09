@@ -158,3 +158,7 @@ To port pubsub to another framework, you will have to provide the following inte
 * semaphores/mutexes for multithreading
 * (optional) a kernel polling API for poll based usage
 * a high resolution timestamping implementation is very useful for usage. Microsecond resolution is preferred but millisecond resolution is sufficient.
+
+## Revisions
+V1.0
+Initial stable release.
