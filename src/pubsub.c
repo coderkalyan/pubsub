@@ -6,6 +6,8 @@
 
 #include <pubsub/pubsub.h>
 
+void pubsub_subscriber_notify(struct pubsub_subscriber_s *subscriber);
+
 void pubsub_topic_init(struct pubsub_topic_s *topic, size_t size)
 {
 	topic->init = false;
