@@ -151,6 +151,15 @@ static void subscriber_thread_entry_point(void)
 }
 ```
 
+## When to use this
+This is by no means an exhaustive list of considerations when choosing whether or not to use pubsub. However, since the use case for pubsub differs from some of the other built in communication utilities in Zephyr, here's a brief overview:
+* Use **pubsub** when you need high rate communication (i.e. sensor data)
+* Use **pubsub** when you want a single-publisher, multi-subscriber API.
+* Use **pubsub** when your data format/structure is static, not different between samples
+* **Don't** use pubsub when you need to store or batch multiple samples in a queue or stack
+* Use a **FIFO** if you need a single subscriber API with potentially varying data structures
+* Use a **mailbox** when you need bidirectional data transfer
+
 ## Porting
 To port pubsub to another framework, you will have to provide the following interfaces:
 * a C heap implementation (malloc/free)
