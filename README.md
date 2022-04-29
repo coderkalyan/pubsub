@@ -62,7 +62,7 @@ PUBSUB_TOPIC_DEFINE(my_message_topic, sizeof(struct my_message_s));
 static void publisher_thread_entry_point(void)
 {
 	struct my_message_s message;
-	memset(message, 0, sizeof(struct my_message_s));
+	memset(&message, 0, sizeof(struct my_message_s));
 
 	while (1) {
 		/* how you want to handle timestamps is up to you, but it's good practice to populate it with something, even if it isn't accurate down to the microsecond */
@@ -98,9 +98,9 @@ static void subscriber_thread_entry_point(void)
 
 	while (1) {
 		/* have we gotten any new published data since last time? */
-		if (pubsub_subscriber_updated(my_message_sub)) {
+		if (pubsub_subscriber_updated(&my_message_sub)) {
 			/* if so, copy it into our own struct */
-			pubsub_copy(my_message_sub, message);
+			pubsub_copy(&my_message_sub, &message);
 
 			printf("Received counter1: %d, counter2: %d\n", message.counter1, message.counter2);
 		}
@@ -138,7 +138,7 @@ static void subscriber_thread_entry_point(void)
 
 		if (ret > 0) {
 			/* got new data, copy it into our own struct */
-			pubsub_copy(my_message_sub, message);
+			pubsub_copy(&my_message_sub, &message);
 
 			printf("Received counter1: %d, counter2: %d\n", message.counter1, message.counter2);
 		} else if (ret == 0) {
