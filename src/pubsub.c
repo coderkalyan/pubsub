@@ -69,7 +69,11 @@ void *pubsub_get(struct pubsub_subscriber_s *subscriber)
 {
 	int key = irq_lock();
 
-	if (!subscriber->topic || !(subscriber->topic->init)) return NULL;
+	if (!subscriber->topic || !(subscriber->topic->init)) {
+            irq_unlock(key);
+            return NULL;
+        }
+
 	k_sem_reset(&(subscriber->updated));
 	void *ptr = subscriber->topic->message[subscriber->channel];
 
@@ -82,7 +86,10 @@ void pubsub_copy(struct pubsub_subscriber_s *subscriber, void *msg)
 {
 	int key = irq_lock();
 
-	if (!subscriber->topic || !(subscriber->topic->init)) return;
+	if (!subscriber->topic || !(subscriber->topic->init)) {
+            irq_unlock(key);
+            return;
+        }
 
 	k_sem_reset(&(subscriber->updated));
 	void *ptr = subscriber->topic->message[subscriber->channel];
