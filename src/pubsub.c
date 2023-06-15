@@ -1,9 +1,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include <sys/slist.h>
-#include <zephyr.h>
-
 #include <pubsub/pubsub.h>
 
 void pubsub_subscriber_notify(struct pubsub_subscriber_s *subscriber);
