@@ -10,9 +10,9 @@
 
 #include <stdbool.h>
 
-#include <sys/slist.h>
-#include <zephyr.h>
-#include <init.h>
+#include <zephyr/kernel.h>
+#include <zephyr/sys/slist.h>
+#include <zephyr/init.h>
 
 #define MAX_CHANNELS 4
 
