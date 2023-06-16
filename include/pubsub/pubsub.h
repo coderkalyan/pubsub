@@ -140,10 +140,8 @@ int pubsub_poll(struct pubsub_subscriber_s *subscriber, k_timeout_t timeout);
 #define PUBSUB_TOPIC_DEFINE(topic_name, topic_msg_size)			\
 	struct pubsub_topic_s topic_name;  							\
 																\
-	static int pubsub_topic_init_##topic_name(const struct device *dev)		\
+	static int pubsub_topic_init_##topic_name(void)		\
 	{ 															\
-		ARG_UNUSED(dev); 										\
-																\
 		pubsub_topic_init(&topic_name, topic_msg_size); 		\
 		return 0; 												\
 	} 															\
@@ -165,11 +163,9 @@ int pubsub_poll(struct pubsub_subscriber_s *subscriber, k_timeout_t timeout);
 #define PUBSUB_SUBSCRIBER_DEFINE(topic_name, subscriber_name, channel) 	\
 	static struct pubsub_subscriber_s subscriber_name; 				\
 																\
-	static int pubsub_sub_init_##subscriber_name(const struct device *dev) { \
-		ARG_UNUSED(dev); 										\
-																\
+	static int pubsub_sub_init_##subscriber_name(void)                                                              \
+        {                                                                                                               \
 		pubsub_subscriber_register(&topic_name, &subscriber_name, channel); \
-																\
 		return 0; 												\
 	} 															\
 																\
